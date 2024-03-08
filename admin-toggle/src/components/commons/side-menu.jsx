@@ -3,13 +3,17 @@ import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
 const SideMenu = () => {
-    const [open, setOpen] = useState(localStorage.getItem("openMenu"));
-    const [active, setActive] = useState(null);
+    const [open, setOpen] = useState(sessionStorage.getItem("openMenu"));
+    const [active, setActive] = useState(sessionStorage.getItem("activeMenu"));
     const navigate = useNavigate();
 
     useEffect(() => {
-        localStorage.setItem("openMenu", open);
+        sessionStorage.setItem("openMenu", open);
     }, [open]);
+
+    useEffect(() => {
+        sessionStorage.setItem("activeMenu", active);
+    }, [active]);
 
     const manageMent = [
         {

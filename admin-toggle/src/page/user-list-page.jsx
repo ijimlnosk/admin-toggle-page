@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useLocation, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { CreateUserData } from "../utils/user-data";
 import { styled } from "styled-components";
 import Pagination from "../components/user-page/pagination";
@@ -7,7 +7,6 @@ import Pagination from "../components/user-page/pagination";
 const UserListPage = () => {
     const [userData, setUserData] = useState([]);
     const [sortOrder, setSortOrder] = useState(false);
-    const location = useLocation();
 
     // 상태를 가지고있다.
     const [searchParams, setSearchParams] = useSearchParams();
