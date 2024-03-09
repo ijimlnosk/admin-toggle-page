@@ -1,5 +1,3 @@
-import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
 import styled from "styled-components";
 import UserList from "./user-list";
 
@@ -12,36 +10,22 @@ import UserList from "./user-list";
  *
  * @description pagination을 하게해주는 페이지입니다
  */
-const Pagination = ({ curPage, setCurpage, userPerPage, userData }) => {
-    const location = useLocation();
-    const [currentPage, setCurrentPage] = useState(1);
+const Pagination = ({ curPage, setCurPage, userPerPage, userData }) => {
     const perPageGroup = 5;
-
-    // ?page=1&per_page=20 --- queryString
-    const queryParams = new URLSearchParams(location.search);
-
-    // queryParams의 key값 (page)의 value
-    const params = Number(queryParams.get("page"));
-
-    useEffect(() => {
-        if (params <= perPageGroup) {
-            setCurrentPage(1);
-        }
-        if (params > perPageGroup) {
-            setCurrentPage(2);
-        }
-    }, [params]);
-
     // userData.length를 userPerPage로 나누어서 올림
     const pageCount = Math.ceil(userData.length / userPerPage);
 
+    // queryParams의 key값 (page)의 value
+    const params = Number(curPage.get("page"));
+
     const paginate = (page) => {
         curPage.set("page", page);
-        setCurpage(curPage);
+        setCurPage(curPage);
     };
 
     const pageNumbers = () => {
-        const startPage = (currentPage - 1) * perPageGroup + 1;
+        const startPage =
+            Math.floor((params - 1) / perPageGroup) * perPageGroup + 1;
         const endPage = Math.min(startPage + perPageGroup - 1, pageCount);
 
         return Array.from({ length: endPage - startPage + 1 }, (_, index) => (
@@ -60,30 +44,42 @@ const Pagination = ({ curPage, setCurpage, userPerPage, userData }) => {
 
     const prevPage = () => {
         if (params > 1) {
-            const newPage = params - 1;
-            paginate(newPage);
+            paginate(params - 1);
         }
     };
 
     const prevGroup = () => {
-        paginate(1);
-        setCurrentPage(1);
+        const prevPageGroup =
+            (Math.ceil(params / perPageGroup) - 2) * perPageGroup + 1;
+        if (prevPageGroup < 1) return;
+        if (prevPageGroup <= pageCount) {
+            paginate(prevPageGroup);
+        }
     };
 
     const nextPage = () => {
         if (params < pageCount) {
-            const newPage = params + 1;
-            paginate(newPage);
+            paginate(params + 1);
         }
     };
 
     const nextGroup = () => {
-        paginate(1 + perPageGroup);
+        const nextPageGroup =
+            Math.ceil(params / perPageGroup) * perPageGroup + 1;
+        console.log(nextPageGroup, "nextPageGroup");
+        console.log(pageCount, "pageCount");
+        if (nextPageGroup <= pageCount) {
+            paginate(nextPageGroup);
+        }
     };
 
     return (
         <Wrapper>
-            <UserList userData={userData} userPerPage={userPerPage} />
+            <UserList
+                userData={userData}
+                userPerPage={userPerPage}
+                curPage={curPage}
+            />
             <PageNumber>
                 <Ul>
                     <Li>
@@ -128,10 +124,11 @@ const Li = styled.li`
 const Button = styled.button`
     cursor: pointer;
     background-color: ${(props) =>
-        props.$isActive ? "#171010" : "transparent"};
-    color: ${(props) => (props.$isActive ? "#fff" : "#000")};
-    border: ${(props) => (props.$isActive ? "1px solid #171010" : "#ddd")};
+        props.$isActive ? "#747264" : "transparent"};
+    color: ${(props) => (props.$isActive ? "#eeedeb" : "#e0ccbe")};
+    border: ${(props) => (props.$isActive ? "1px solid #3c3633" : "#ddd")};
     border-radius: 4px;
+    font-size: 20px;
 
     &:hover {
         background-color: ${(props) =>

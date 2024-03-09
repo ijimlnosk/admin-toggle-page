@@ -3,10 +3,15 @@ import { useSearchParams } from "react-router-dom";
 import { CreateUserData } from "../utils/user-data";
 import { styled } from "styled-components";
 import Pagination from "../components/user-page/pagination";
-
+/**
+ * @component
+ * @returns {JSX.Element}
+ *
+ * @description 유저 목록을 보여주는 컴포넌트입니다.
+ */
 const UserListPage = () => {
     const [userData, setUserData] = useState([]);
-    const [sortOrder, setSortOrder] = useState(false);
+    const [sortType, setSortType] = useState(false);
 
     // 상태를 가지고있다.
     const [searchParams, setSearchParams] = useSearchParams();
@@ -38,7 +43,7 @@ const UserListPage = () => {
 
         // key값 name, birthday...등을 받아와서 정렬해주는 함수
         const sortKeyChange = (key) => {
-            const order = searchParams.get("order") === "desc";
+            const order = searchParams.get("type") === "true";
             const sortKey = [...userData].sort((a, b) => {
                 const aValue = String(a[key]);
                 const bValue = String(b[key]);
@@ -58,15 +63,14 @@ const UserListPage = () => {
             sortKeyChange(sortKey);
         }
 
-        const orderParam = searchParams.get("order");
-        setSortOrder(orderParam === "desc");
+        const typeParam = searchParams.get("type");
+        setSortType(typeParam === "true");
         // 주소가 변경될 때마다 마운트
     }, [searchParams]);
 
     // event의 target.value값을 params의 key, value로 전달
-    const handlePerPageChange = (e) => {
-        const newPerPage = e.target.value; // e.target.value로 새값 넣어주기
-        searchParams.set("per_page", newPerPage);
+    const handleChange = (key, value) => {
+        searchParams.set(key, value);
         setSearchParams(searchParams);
     };
 
@@ -77,26 +81,20 @@ const UserListPage = () => {
         setSearchParams(searchParams);
     };
 
-    const handleSortOrderChange = (e) => {
-        const order = e.target.value === "true" ? "desc" : "asc";
-        searchParams.set("order", order);
-        setSearchParams(searchParams);
-    };
-
     return (
         <Wrapper>
             <SelectPerPageBox>
                 <SelectPerPage
                     value={searchParams.get("per_page")}
-                    onChange={handlePerPageChange}
+                    onChange={(e) => handleChange("per_page", e.target.value)}
                 >
                     <Option value={20}>20</Option>
                     <Option value={50}>50</Option>
                 </SelectPerPage>
                 {/* 중복되는 button을 배열을 받아와 map으로 보여줌 */}
                 <SelectPerPage
-                    onChange={handleSortOrderChange}
-                    value={sortOrder ? "true" : "false"}
+                    onChange={(e) => handleChange("type", e.target.value)}
+                    value={sortType ? "true" : "false"}
                 >
                     <Option value={"false"}>오름차순</Option>
                     <Option value={"true"}>내림차순</Option>
@@ -116,7 +114,7 @@ const UserListPage = () => {
             <Wrapper>
                 <Pagination
                     curPage={searchParams}
-                    setCurpage={setSearchParams}
+                    setCurPage={setSearchParams}
                     userPerPage={searchParams.get("per_page")}
                     userData={userData}
                 />
@@ -133,12 +131,12 @@ const SelectPerPageBox = styled.div`
 `;
 
 const Option = styled.option`
-    background-color: #2b2b2b;
+    background-color: #3c3633;
 `;
 
 const SelectPerPage = styled.select`
-    background-color: #2b2b2b;
-    color: #aaa;
+    background-color: #3c3633;
+    color: #e0ccbe;
     border: none;
     padding: 0 10px;
 `;
@@ -148,12 +146,12 @@ const Wrapper = styled.div`
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    background-color: #2b2b2b;
+    background-color: #3c3633;
 `;
 
 const SortButton = styled.button`
-    background-color: ${(props) => (props.$isActive ? "#423f3e" : "#2b2b2b")};
-    color: ${(props) => (props.$isActive ? "#888" : "#aaa")};
+    background-color: ${(props) => (props.$isActive ? "#747264" : "#3c3633")};
+    color: ${(props) => (props.$isActive ? "#eeedeb" : "#e0ccbe")};
     border: none;
     cursor: ${(props) => (props.$isActive ? "default" : "pointer")};
     padding: 0 10px;

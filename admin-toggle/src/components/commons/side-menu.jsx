@@ -1,9 +1,16 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-
+/**
+ * @component
+ * @returns {JSX.Element}
+ *
+ * @description 페이지 이동을 할 수있는 사이드 메뉴입니다.
+ */
 const SideMenu = () => {
+    // 메뉴가 오픈 되어있는지 여부를 저장하기 위해 사용
     const [open, setOpen] = useState(sessionStorage.getItem("openMenu"));
+    // 메뉴가 클릭 되어있는지 여부를 저장하기 위해 사용
     const [active, setActive] = useState(sessionStorage.getItem("activeMenu"));
     const navigate = useNavigate();
 
@@ -15,7 +22,7 @@ const SideMenu = () => {
         sessionStorage.setItem("activeMenu", active);
     }, [active]);
 
-    const manageMent = [
+    const management = [
         {
             name: "main",
             title: "홈",
@@ -50,7 +57,7 @@ const SideMenu = () => {
 
     return (
         <Container>
-            {manageMent.map((item, i) => (
+            {management.map((item, i) => (
                 <div key={i}>
                     <Title onClick={() => toggleMenu(item.name)}>
                         {item?.title}
@@ -90,13 +97,6 @@ const Container = styled.div`
     padding-top: 20px;
     z-index: 999;
     background-color: #423f3e;
-`;
-
-const ToMain = styled.div`
-    padding-bottom: 4px;
-    color: #aaa;
-    background-color: #423f3e;
-    cursor: pointer;
 `;
 
 const Title = styled.div`
